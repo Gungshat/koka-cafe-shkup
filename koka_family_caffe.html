@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koka Family Caffè</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --cream:#F6F0E4;--espresso:#1E0F05;--mocha:#7C4A20;--latte:#C9A87C;
+  --foam:#EDE4D0;--green:#3D5232;--light-green:#6B8259;--dark:#120A02;
+}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--espresso);overflow-x:hidden;}
+
+/* LANG SWITCHER */
+.lang-bar{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;justify-content:flex-end;align-items:center;
+  padding:0.5rem 1.2rem;gap:0.3rem;
+  background:var(--espresso);
+}
+.lang-btn{
+  background:none;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);
+  font-family:'DM Sans',sans-serif;font-size:0.7rem;letter-spacing:0.1em;
+  padding:0.3rem 0.7rem;cursor:pointer;transition:all 0.2s;text-transform:uppercase;
+}
+.lang-btn.active{background:var(--latte);border-color:var(--latte);color:var(--espresso);font-weight:500;}
+.lang-btn:hover:not(.active){background:rgba(255,255,255,0.1);color:#fff;}
+
+/* NAV */
+nav{
+  position:fixed;top:32px;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1rem 1.4rem;
+  background:rgba(124,74,32,0.12);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(124,74,32,0.12);
+}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--mocha);letter-spacing:0.02em;}
+.hamburger{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--espresso);transition:all 0.3s;}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(4.5px,-4.5px);}
+.desktop-links{display:none;}
+
+/* MOBILE MENU */
+.mobile-menu{
+  position:fixed;top:0;left:0;right:0;bottom:0;z-index:99;
+  background:var(--espresso);color:var(--cream);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2rem;
+  transform:translateX(100%);transition:transform 0.35s cubic-bezier(.77,0,.175,1);
+  padding-top:80px;
+}
+.mobile-menu.open{transform:translateX(0);}
+.mobile-menu a{
+  font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--cream);
+  text-decoration:none;letter-spacing:0.05em;opacity:0.85;
+  transition:opacity 0.2s,color 0.2s;
+}
+.mobile-menu a:hover{opacity:1;color:var(--latte);}
+
+/* HERO */
+.hero{
+  min-height:100svh;padding-top:96px;
+  display:flex;flex-direction:column;
+  background:var(--cream);
+}
+.hero-img-wrap{
+  width:100%;height:52vw;min-height:200px;max-height:340px;
+  background:var(--foam);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  flex-shrink:0;
+}
+.hero-svg-wrap{width:min(260px,70vw);height:min(260px,70vw);}
+.hero-badge-float{
+  position:absolute;bottom:1rem;right:1rem;
+  width:72px;height:72px;background:var(--mocha);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--cream);
+}
+.hero-badge-float .bnum{font-family:'Cormorant Garamond',serif;font-size:1.4rem;line-height:1;}
+.hero-badge-float .blbl{font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;}
+.hero-text-wrap{padding:2rem 1.4rem 2.5rem;flex:1;display:flex;flex-direction:column;justify-content:center;}
+.hero-eyebrow{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--mocha);margin-bottom:1rem;display:flex;align-items:center;gap:0.6rem;}
+.hero-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--mocha);}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,9vw,3.4rem);line-height:1.06;margin-bottom:1rem;}
+.hero-title em{font-style:italic;color:var(--mocha);}
+.hero-body{font-size:0.9rem;line-height:1.75;opacity:0.65;margin-bottom:1.6rem;max-width:420px;}
+.cta-btn{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  background:var(--espresso);color:var(--cream);
+  padding:0.85rem 1.8rem;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:0.75rem;
+  letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;
+  transition:background 0.2s;width:fit-content;
+}
+.cta-btn:hover{background:var(--mocha);}
+.cta-arrow{transition:transform 0.2s;}
+.cta-btn:hover .cta-arrow{transform:translateX(4px);}
+
+/* ABOUT */
+.about{background:var(--espresso);color:var(--cream);padding:3rem 1.4rem;}
+.about-eyebrow{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--latte);margin-bottom:1rem;}
+.about-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,7vw,2.4rem);line-height:1.2;margin-bottom:1.2rem;}
+.about-body{font-size:0.9rem;line-height:1.8;opacity:0.65;margin-bottom:1.5rem;}
+.stats-row{display:flex;gap:2rem;margin-top:0.5rem;flex-wrap:wrap;}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--latte);display:block;line-height:1;}
+.stat-l{font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.45;margin-top:0.25rem;}
+.icons-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:2rem 0;}
+.icon-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:1.2rem;text-align:center;}
+.icon-card .ic{font-size:1.6rem;margin-bottom:0.4rem;}
+.icon-card .il{font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.6;}
+
+/* SECTION SHARED */
+.section-wrap{padding:3rem 1.4rem;}
+.sec-eyebrow{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--mocha);margin-bottom:0.7rem;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,7vw,2.4rem);margin-bottom:2rem;}
+
+/* MENU */
+.menu-wrap{background:var(--cream);}
+.menu-tabs{display:flex;gap:0;margin-bottom:1.8rem;border-bottom:1px solid rgba(124,74,32,0.15);}
+.menu-tab{
+  flex:1;padding:0.75rem 0.5rem;text-align:center;
+  font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
+  cursor:pointer;border:none;background:none;
+  color:var(--espresso);opacity:0.45;transition:all 0.2s;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+}
+.menu-tab.active{opacity:1;color:var(--mocha);border-bottom-color:var(--mocha);}
+.menu-panel{display:none;}
+.menu-panel.active{display:block;}
+.menu-item{display:flex;justify-content:space-between;align-items:baseline;padding:0.75rem 0;border-bottom:1px solid rgba(124,74,32,0.1);gap:0.5rem;}
+.mi-name{font-size:0.9rem;}
+.mi-dots{flex:1;border-bottom:1px dotted rgba(124,74,32,0.2);margin:0 0.5rem;margin-bottom:3px;}
+.mi-price{font-size:0.85rem;color:var(--mocha);font-weight:500;white-space:nowrap;}
+
+/* ATMOSPHERE */
+.atm-wrap{background:var(--foam);}
+.atm-scroll{display:flex;gap:1rem;overflow-x:auto;padding-bottom:1rem;scrollbar-width:none;}
+.atm-scroll::-webkit-scrollbar{display:none;}
+.atm-card{
+  flex-shrink:0;width:160px;height:200px;
+  display:flex;align-items:flex-end;padding:1rem;
+  position:relative;overflow:hidden;
+}
+ .atm-card:nth-child(1){background-image: url(koka-foto-1.jpeg); background-size: cover;   /*var(--green);width:220px; */}
+.atm-card:nth-child(2){background:url(koka-foto-2.jpeg); background-size: cover;/*:var(--mocha);*/}
+.atm-card:nth-child(3){background:url(koka-foto-3.jpeg); background-size: cover;/*:var(--#8B6914);*/}
+.atm-card:nth-child(4){background:url(koka-foto-4.jpeg); background-size: cover;/*:var(--light-green);*/}
+.atm-bg{position:absolute;inset:0;font-size:5rem;display:flex;align-items:center;justify-content:center;opacity:0.1;pointer-events:none;}
+.atm-lbl{font-size:1rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--latte);background-color: #1e0f05d5;  position:relative;z-index:1;}
+
+/* INFO */
+.info-wrap{background:var(--espresso);color:var(--cream);}
+.info-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--latte);margin-bottom:1.5rem;}
+.hours-row{display:flex;justify-content:space-between;padding:0.65rem 0;border-bottom:1px solid rgba(255,255,255,0.07);font-size:0.88rem;}
+.hours-row .day{opacity:0.55;}
+.hours-row .time{font-weight:500;}
+.hours-row.today{color:var(--latte);}
+.hours-row.today .day{opacity:1;}
+.loc-item{display:flex;gap:0.9rem;align-items:flex-start;margin-bottom:1.2rem;}
+.loc-icon{width:32px;height:32px;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.9rem;}
+.loc-ttl{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.45;margin-bottom:0.2rem;}
+.loc-val{font-size:0.88rem;opacity:0.8;line-height:1.5;}
+.map-btn{
+  display:block;width:100%;margin-top:1.5rem;padding:1rem;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  color:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.72rem;
+  letter-spacing:0.12em;text-transform:uppercase;text-align:center;
+  cursor:pointer;text-decoration:none;transition:background 0.2s;
+}
+.map-btn:hover{background:rgba(255,255,255,0.1);}
+
+/* FOOTER */
+footer{background:#0E0602;color:var(--cream);padding:2rem 1.4rem;text-align:center;}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--latte);margin-bottom:0.4rem;}
+.footer-sub{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.35;margin-bottom:1rem;}
+.footer-phone{font-size:0.9rem;opacity:0.6;}
+.footer-copy{font-size:0.65rem;opacity:0.25;margin-top:1rem;}
+
+/* DESKTOP OVERRIDES */
+@media(min-width:768px){
+  nav{padding:1.1rem 3rem;}
+  .hamburger{display:none;}
+  .desktop-links{display:flex;gap:2.5rem;list-style:none;}
+  .desktop-links a{text-decoration:none;font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--espresso);opacity:0.65;transition:opacity 0.2s;}
+  .desktop-links a:hover{opacity:1;}
+  .hero{flex-direction:row;min-height:100svh;}
+  .hero-img-wrap{width:50%;height:auto;max-height:none;flex:1;}
+  .hero-text-wrap{width:50%;flex:1;padding:3rem 3.5rem;justify-content:center;}
+  .about{display:grid;grid-template-columns:1fr 1fr;gap:3rem;padding:5rem 4rem;align-items:center;}
+  .icons-grid{grid-template-columns:1fr 1fr;}
+  .section-wrap{padding:5rem 4rem;}
+  .menu-tabs{max-width:400px;}
+  .atm-scroll{flex-wrap:wrap;overflow:visible;}
+  .atm-card{flex-shrink:1;flex:1;min-width:140px;height:240px;}
+  .atm-card:nth-child(1){flex:2;}
+  .info-wrap{display:grid;grid-template-columns:1fr 1fr;gap:2rem;padding:5rem 4rem;}
+  .info-wrap .section-wrap{padding:0;}
+  footer{display:flex;justify-content:space-between;align-items:center;padding:2.5rem 4rem;text-align:left;}
+  .footer-copy{margin-top:0;}
+  .lang-bar{padding:0.5rem 3rem;}
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.hero-eyebrow{animation:fadeUp 0.5s ease both;}
+.hero-title{animation:fadeUp 0.5s 0.1s ease both;}
+.hero-body{animation:fadeUp 0.5s 0.2s ease both;}
+.cta-btn{animation:fadeUp 0.5s 0.3s ease both;}
+</style>
+</head>
+<body>
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" onclick="setLang('mk')">МК</button>
+  <button class="lang-btn" onclick="setLang('sq')">SQ</button>
+</div>
+
+<nav>
+  <div class="nav-logo"><img src="koka-logo.png" alt="Koka Family Caffè" height="40rem" width="40rem"></div>
+  <ul class="desktop-links">
+    <li><a href="#about" data-t="nav_about">About</a></li>
+    <li><a href="#menu" data-t="nav_menu">Menu</a></li>
+    <li><a href="#atmosphere" data-t="nav_atm">Gallery</a></li>
+    <li><a href="#info" data-t="nav_visit">Visit Us</a></li>
+  </ul>
+  <div class="hamburger" id="ham" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()" data-t="nav_about">About</a>
+  <a href="#menu" onclick="closeMenu()" data-t="nav_menu">Menu</a>
+  <a href="#atmosphere" onclick="closeMenu()" data-t="nav_atm">Gallery</a>
+  <a href="#info" onclick="closeMenu()" data-t="nav_visit">Visit Us</a>
+</div>
+
+<section class="hero" id="top">
+  <div class="hero-img-wrap">
+    <img src="koka-foto-main.jpeg" style="width: 100%; height: 100%; object-fit: cover;">
+    <div class="hero-badge-float">
+      <span class="bnum">4.6</span>
+      <span class="blbl">★ rated</span>
+    </div>
+  </div>
+  <div class="hero-text-wrap">
+    <div class="hero-eyebrow" data-t="hero_eyebrow">Tale Hristov 1 · Skopje</div>
+    <h1 class="hero-title" data-t="hero_title">Where Every<br>Cup Tells a<br><em>Story</em></h1>
+    <p class="hero-body" data-t="hero_body">A family-run café shaded by plants, where specialty coffee and warm hospitality make every visit unforgettable.</p>
+    <a href="#info" class="cta-btn"><span data-t="hero_cta">Find Us</span> <span class="cta-arrow">→</span></a>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="icons-grid">
+    <div class="icon-card"><div class="ic">🌿</div><div class="il" data-t="ic1">Natural Vibes</div></div>
+    <div class="icon-card"><div class="ic">☕</div><div class="il" data-t="ic2">ORO Coffee</div></div>
+    <div class="icon-card"><div class="ic">🌞</div><div class="il" data-t="ic3">Open Daily</div></div>
+    <div class="icon-card"><div class="ic">🤝</div><div class="il" data-t="ic4">Family Run</div></div>
+  </div>
+  <div>
+    <div class="about-eyebrow" data-t="about_eyebrow">Our Story</div>
+    <h2 class="about-title" data-t="about_title">A Neighborhood Gem Since Day One</h2>
+    <p class="about-body" data-t="about_body1">Koka Family Caffè was born from a simple love of great coffee and warm hospitality. Our terrace is shaded by plants — the perfect escape from the city buzz.</p>
+    <p class="about-body" data-t="about_body2">We proudly serve ORO specialty coffee, prepared with care. Whether a regular or first-timer, you'll feel right at home.</p>
+    <div class="stats-row">
+      <div><span class="stat-n">7AM</span><div class="stat-l" data-t="stat1">Open Every Day</div></div>
+      <div><span class="stat-n">4.6★</span><div class="stat-l" data-t="stat2">Google Rating</div></div>
+      <div><span class="stat-n">67+</span><div class="stat-l" data-t="stat3">Happy Reviews</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-wrap menu-wrap" id="menu">
+  <div class="sec-eyebrow" data-t="menu_eyebrow">What We Serve</div>
+  <h2 class="sec-title" data-t="menu_title">Our Menu</h2>
+  <div class="menu-tabs">
+    <button class="menu-tab active" onclick="switchTab(0)" data-t="tab1">Coffee</button>
+    <button class="menu-tab" onclick="switchTab(1)" data-t="tab2">Cold Drinks</button>
+    <button class="menu-tab" onclick="switchTab(2)" data-t="tab3">Snacks</button>
+  </div>
+  <div class="menu-panel active" id="panel0">
+    <div class="menu-item"><span class="mi-name" data-t="m1">Espresso</span><div class="mi-dots"></div><span class="mi-price">80 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m2">Macchiato</span><div class="mi-dots"></div><span class="mi-price">90 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m3">Cappuccino</span><div class="mi-dots"></div><span class="mi-price">110 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m4">Flat White</span><div class="mi-dots"></div><span class="mi-price">120 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m5">Latte</span><div class="mi-dots"></div><span class="mi-price">120 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m6">Americano</span><div class="mi-dots"></div><span class="mi-price">100 ден</span></div>
+  </div>
+  <div class="menu-panel" id="panel1">
+    <div class="menu-item"><span class="mi-name" data-t="m7">Iced Latte</span><div class="mi-dots"></div><span class="mi-price">150 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m8">Cold Brew</span><div class="mi-dots"></div><span class="mi-price">160 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m9">Lemonade</span><div class="mi-dots"></div><span class="mi-price">130 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m10">Fresh Orange Juice</span><div class="mi-dots"></div><span class="mi-price">150 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m11">Smoothie of the Day</span><div class="mi-dots"></div><span class="mi-price">170 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m12">Soft Drinks</span><div class="mi-dots"></div><span class="mi-price">80 ден</span></div>
+  </div>
+  <div class="menu-panel" id="panel2">
+    <div class="menu-item"><span class="mi-name" data-t="m13">Croissant</span><div class="mi-dots"></div><span class="mi-price">100 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m14">Burek</span><div class="mi-dots"></div><span class="mi-price">80 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m15">Toast Sandwich</span><div class="mi-dots"></div><span class="mi-price">130 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m16">Cheesecake Slice</span><div class="mi-dots"></div><span class="mi-price">160 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m17">Brownie</span><div class="mi-dots"></div><span class="mi-price">120 ден</span></div>
+    <div class="menu-item"><span class="mi-name" data-t="m18">Mixed Nuts</span><div class="mi-dots"></div><span class="mi-price">90 ден</span></div>
+  </div>
+</section>
+
+<section class="section-wrap atm-wrap" id="atmosphere">
+  <div class="sec-eyebrow" data-t="atm_eyebrow">The Experience</div>
+  <h2 class="sec-title" data-t="atm_title">Our Atmosphere</h2>
+  <div class="atm-scroll">
+    <div class="atm-card"><div class="atm-bg">🌿</div><div class="atm-lbl" data-t="atm1">Plant-filled terrace</div></div>
+    <div class="atm-card"><div class="atm-bg">☕</div><div class="atm-lbl" data-t="atm2">Specialty coffee</div></div>
+    <div class="atm-card"><div class="atm-bg">🎵</div><div class="atm-lbl" data-t="atm3">Relaxing music</div></div>
+    <div class="atm-card"><div class="atm-bg">🌞</div><div class="atm-lbl" data-t="atm4">Sunny seating</div></div>
+  </div>
+</section>
+
+<div class="info-wrap" id="info">
+  <div class="section-wrap">
+    <h3 class="info-title" data-t="hours_title">Opening Hours</h3>
+    <div class="hours-row today"><span class="day" data-t="h1">Monday – Friday</span><span class="time">7:00 – 24:00</span></div>
+    <div class="hours-row"><span class="day" data-t="h2">Saturday</span><span class="time">7:00 – 24:00</span></div>
+    <div class="hours-row"><span class="day" data-t="h3">Sunday</span><span class="time">7:00 – 24:00</span></div>
+  </div>
+  <div class="section-wrap">
+    <h3 class="info-title" data-t="find_title">Find Us</h3>
+    <div class="loc-item"><div class="loc-icon">📍</div><div><div class="loc-ttl" data-t="loc_addr_lbl">Address</div><div class="loc-val">Tale Hristov 1<br>Skopje 1000, North Macedonia</div></div></div>
+    <div class="loc-item"><div class="loc-icon">📞</div><div><div class="loc-ttl" data-t="loc_phone_lbl">Phone</div><div class="loc-val">+389 70 511 071</div></div></div>
+    <a class="map-btn" href="https://www.google.com/maps/place/?q=place_id:ChIJp1Xr-8MVVBMRGQ_Dcv0E160" data-t="map_btn">Open in Google Maps →</a>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <div class="footer-logo">Koka Family Caffè</div>
+    <div class="footer-sub" data-t="footer_sub">Tale Hristov 1 · Skopje · Open Daily</div>
+  </div>
+  <div class="footer-phone">+389 70 511 071</div>
+  <div class="footer-copy" data-t="footer_copy">© 2026 Koka Family Caffè</div>
+</footer>
+
+<script>
+const T={
+  en:{
+    nav_about:"About",nav_menu:"Menu",nav_atm:"Gallery",nav_visit:"Visit Us",
+    hero_eyebrow:"Tale Hristov 1 · Skopje",
+    hero_title:"Where Every<br>Cup Tells a<br><em>Story</em>",
+    hero_body:"A family-run café shaded by plants, where specialty coffee and warm hospitality make every visit unforgettable.",
+    hero_cta:"Find Us",
+    ic1:"Natural Vibes",ic2:"ORO Coffee",ic3:"Open Daily",ic4:"Family Run",
+    about_eyebrow:"Our Story",
+    about_title:"A Neighborhood Gem Since Day One",
+    about_body1:"Koka Family Caffè was born from a simple love of great coffee and warm hospitality. Our terrace is shaded by plants — the perfect escape from the city buzz.",
+    about_body2:"We proudly serve ORO specialty coffee, prepared with care. Whether a regular or first-timer, you'll feel right at home.",
+    stat1:"Open Every Day",stat2:"Google Rating",stat3:"Happy Reviews",
+    menu_eyebrow:"What We Serve",menu_title:"Our Menu",
+    tab1:"Coffee",tab2:"Cold Drinks",tab3:"Snacks",
+    m1:"Espresso",m2:"Macchiato",m3:"Cappuccino",m4:"Flat White",m5:"Latte",m6:"Americano",
+    m7:"Iced Latte",m8:"Cold Brew",m9:"Lemonade",m10:"Fresh Orange Juice",m11:"Smoothie of the Day",m12:"Soft Drinks",
+    m13:"Croissant",m14:"Burek",m15:"Toast Sandwich",m16:"Cheesecake Slice",m17:"Brownie",m18:"Mixed Nuts",
+    atm_eyebrow:"The Experience",atm_title:"Our Atmosphere",
+    atm1:"Plant-filled terrace",atm2:"Specialty coffee",atm3:"Relaxing music",atm4:"Sunny seating",
+    hours_title:"Opening Hours",h1:"Monday – Friday",h2:"Saturday",h3:"Sunday",
+    find_title:"Find Us",loc_addr_lbl:"Address",loc_phone_lbl:"Phone",
+    map_btn:"Open in Google Maps →",
+    footer_sub:"Tale Hristov 1 · Skopje · Open Daily",footer_copy:"© 2026 Koka Family Caffè"
+  },
+  mk:{
+    nav_about:"За нас",nav_menu:"Мени",nav_atm:"Галерија",nav_visit:"Посети нè",
+    hero_eyebrow:"Тале Христов 1 · Скопје",
+    hero_title:"Каде секоја<br>шолја раскажува<br><em>Приказна</em>",
+    hero_body:"Семеен кафе-бар во сенка на зеленило, каде специјалитетното кафе и топлото гостопримство го прават секој посет незаборавен.",
+    hero_cta:"Посети нè",
+    ic1:"Природна атмосфера",ic2:"ORO Кафе",ic3:"Отворено секој ден",ic4:"Семеен бизнис",
+    about_eyebrow:"Нашата приказна",
+    about_title:"Скриен бисер во соседството",
+    about_body1:"Koka Family Caffè е роден од едноставна љубов кон доброто кафе и гостопримството. Нашата тераса е во сенка на растенија — совршен бегство од градската врева.",
+    about_body2:"Со гордост служиме ORO специјалитетно кафе, приготвено со грижа. Без разлика дали сте редовен гостин или прв пат, ќе се чувствувате дома.",
+    stat1:"Отворено секој ден",stat2:"Google оцена",stat3:"Задоволни гости",
+    menu_eyebrow:"Што нудиме",menu_title:"Нашето мени",
+    tab1:"Кафе",tab2:"Ладни пијалоци",tab3:"Гризки",
+    m1:"Еспресо",m2:"Макијато",m3:"Капучино",m4:"Флет Вајт",m5:"Лате",m6:"Американо",
+    m7:"Ледено лате",m8:"Колд брју",m9:"Лимонада",m10:"Свеж сок од портокал",m11:"Смути на денот",m12:"Безалкохолни пијалоци",
+    m13:"Кроасан",m14:"Бурек",m15:"Тост сендвич",m16:"Парче чизкејк",m17:"Брауни",m18:"Мешани јатки",
+    atm_eyebrow:"Искуството",atm_title:"Нашата атмосфера",
+    atm1:"Тераса со растенија",atm2:"Специјалитетно кафе",atm3:"Релаксирачка музика",atm4:"Сончево седење",
+    hours_title:"Работно време",h1:"Понеделник – Петок",h2:"Сабота",h3:"Недела",
+    find_title:"Каде сме",loc_addr_lbl:"Адреса",loc_phone_lbl:"Телефон",
+    map_btn:"Отвори во Google Maps →",
+    footer_sub:"Тале Христов 1 · Скопје · Отворено секој ден",footer_copy:"© 2026 Koka Family Caffè"
+  },
+  sq:{
+    nav_about:"Rreth nesh",nav_menu:"Menyja",nav_atm:"Galeria",nav_visit:"Na vizitoni",
+    hero_eyebrow:"Tale Hristov 1 · Shkup",
+    hero_title:"Ku çdo filxhan<br>tregon një<br><em>histori</em>",
+    hero_body:"Një kafe familjare e mbrojtur nga bimët, ku kafja e specializuar dhe mikpritja e ngrohtë e bëjnë çdo vizitë të paharrueshme.",
+    hero_cta:"Na gjeni",
+    ic1:"Atmosferë natyrore",ic2:"Kafe ORO",ic3:"Hapur çdo ditë",ic4:"Biznes familjar",
+    about_eyebrow:"Historia jonë",
+    about_title:"Një gur i çmuar i lagjes",
+    about_body1:"Koka Family Caffè lindi nga dashuria e thjeshtë për kafenë e mirë dhe mikpritjen. Terraca jonë është e mbrojtur nga bimët — strehë perfekte nga zhurma e qytetit.",
+    about_body2:"Ne shërbejmë me krenari kafe specialitete ORO, të përgatitur me kujdes. Qoftë i rregullt apo herën e parë, do të ndiheni si në shtëpi.",
+    stat1:"Hapur çdo ditë",stat2:"Vlerësim Google",stat3:"Mysafirë të lumtur",
+    menu_eyebrow:"Çfarë ofrojmë",menu_title:"Menyja jonë",
+    tab1:"Kafe",tab2:"Pije të ftohta",tab3:"Ushqime",
+    m1:"Espresso",m2:"Macchiato",m3:"Cappuccino",m4:"Flat White",m5:"Latte",m6:"Americano",
+    m7:"Latte i ftohtë",m8:"Cold Brew",m9:"Limonadë",m10:"Lëng portokalli i freskët",m11:"Smoothie i ditës",m12:"Pije joalkoolike",
+    m13:"Kroasan",m14:"Byrek",m15:"Sandëviç tost",m16:"Fetë cheesecake",m17:"Brownie",m18:"Arra të përziera",
+    atm_eyebrow:"Përvoja",atm_title:"Atmosfera jonë",
+    atm1:"Terracë me bimë",atm2:"Kafe specialitete",atm3:"Muzikë relaksuese",atm4:"Ulëse me diell",
+    hours_title:"Orari i punës",h1:"E hënë – E premte",h2:"E shtunë",h3:"E diel",
+    find_title:"Na gjeni",loc_addr_lbl:"Adresa",loc_phone_lbl:"Telefon",
+    map_btn:"Hap në Google Maps →",
+    footer_sub:"Tale Hristov 1 · Shkup · Hapur çdo ditë",footer_copy:"© 2026 Koka Family Caffè"
+  }
+};
+
+let currentLang='en';
+
+function setLang(l){
+  currentLang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    const txt=b.textContent.trim();
+    b.classList.toggle('active',(txt==='EN'&&l==='en')||(txt==='МК'&&l==='mk')||(txt==='SQ'&&l==='sq'));
+  });
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const key=el.getAttribute('data-t');
+    if(T[l][key]!==undefined)el.innerHTML=T[l][key];
+  });
+  document.documentElement.lang=l;
+}
+
+function switchTab(idx){
+  document.querySelectorAll('.menu-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.querySelectorAll('.menu-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+}
+
+function toggleMenu(){
+  document.getElementById('ham').classList.toggle('open');
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+function closeMenu(){
+  document.getElementById('ham').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+setLang('en');
+</script>
+</body>
+</html>
